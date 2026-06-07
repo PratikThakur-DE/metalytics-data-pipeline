@@ -1,0 +1,101 @@
+2024-10-21 20:37:56 | INFO | Initializing database...
+2024-10-21 20:37:56 | INFO | Connecting to database at: postgresql+psycopg2://postgres:admin@localhost:5432/precious_metals_db
+2024-10-21 20:37:57 | INFO | select pg_catalog.version()
+2024-10-21 20:37:57 | INFO | [raw sql] {}
+2024-10-21 20:37:57 | INFO | select current_schema()
+2024-10-21 20:37:57 | INFO | [raw sql] {}
+2024-10-21 20:37:57 | INFO | show standard_conforming_strings
+2024-10-21 20:37:57 | INFO | [raw sql] {}
+2024-10-21 20:37:57 | INFO | Database connection successful.
+2024-10-21 20:37:57 | INFO | Creating database tables.
+2024-10-21 20:37:57 | INFO | BEGIN (implicit)
+2024-10-21 20:37:57 | INFO | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2024-10-21 20:37:57 | INFO | [generated in 0.01314s] {'table_name': 'precious_metals_prices', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2024-10-21 20:37:57 | INFO | SELECT pg_catalog.pg_class.relname 
+FROM pg_catalog.pg_class JOIN pg_catalog.pg_namespace ON pg_catalog.pg_namespace.oid = pg_catalog.pg_class.relnamespace 
+WHERE pg_catalog.pg_class.relname = %(table_name)s AND pg_catalog.pg_class.relkind = ANY (ARRAY[%(param_1)s, %(param_2)s, %(param_3)s, %(param_4)s, %(param_5)s]) AND pg_catalog.pg_table_is_visible(pg_catalog.pg_class.oid) AND pg_catalog.pg_namespace.nspname != %(nspname_1)s
+2024-10-21 20:37:57 | INFO | [cached since 0.02076s ago] {'table_name': 'model_training_metadata', 'param_1': 'r', 'param_2': 'p', 'param_3': 'f', 'param_4': 'v', 'param_5': 'm', 'nspname_1': 'pg_catalog'}
+2024-10-21 20:37:57 | INFO | COMMIT
+2024-10-21 20:37:57 | INFO | Database tables created successfully.
+2024-10-21 20:37:57 | INFO | BEGIN (implicit)
+2024-10-21 20:37:57 | INFO | 
+            CREATE OR REPLACE VIEW precious_metals_prices_view AS
+            SELECT metal, price, timestamp
+            FROM precious_metals_prices;
+        
+2024-10-21 20:37:57 | INFO | [generated in 0.00304s] {}
+2024-10-21 20:37:57 | INFO | COMMIT
+2024-10-21 20:37:57 | INFO | View 'precious_metals_prices_view' created successfully.
+2024-10-21 20:37:57 | INFO | Database initialized successfully.
+2024-10-21 20:37:57 | INFO | Loading metal prices into the database...
+2024-10-21 20:37:57 | INFO | Sending request to https://api.metalpriceapi.com/v1/latest with params: {'api_key': '774ea909e13408111a6444e60d77571f', 'base': 'EUR', 'currencies': 'XAU,XAG,XPT,XPD'}
+2024-10-21 20:37:57 | INFO | Received response status: 200
+2024-10-21 20:37:57 | INFO | Response data: {'success': True, 'base': 'EUR', 'timestamp': 1729468799, 'rates': {'EURXAG': 31.0258637898, 'EURXAU': 2504.8170415252, 'EURXPD': 966.1036117838, 'EURXPT': 938.8962285241, 'XAG': 0.0322311735, 'XAU': 0.0003992308, 'XPD': 0.0010350857, 'XPT': 0.0010650804}}
+2024-10-21 20:37:57 | INFO | Successfully fetched metal prices.
+2024-10-21 20:37:57 | INFO | Connecting to database at: postgresql+psycopg2://postgres:admin@localhost:5432/precious_metals_db
+2024-10-21 20:37:57 | INFO | select pg_catalog.version()
+2024-10-21 20:37:57 | INFO | [raw sql] {}
+2024-10-21 20:37:57 | INFO | select current_schema()
+2024-10-21 20:37:57 | INFO | [raw sql] {}
+2024-10-21 20:37:57 | INFO | show standard_conforming_strings
+2024-10-21 20:37:57 | INFO | [raw sql] {}
+2024-10-21 20:37:57 | INFO | Database connection successful.
+2024-10-21 20:37:57 | INFO | BEGIN (implicit)
+2024-10-21 20:37:57 | INFO | INSERT INTO precious_metals_prices (metal, price, timestamp) SELECT p0::VARCHAR, p1::FLOAT, p2::TIMESTAMP WITHOUT TIME ZONE FROM (VALUES (%(metal__0)s, %(price__0)s, %(timestamp__0)s, 0), (%(metal__1)s, %(price__1)s, %(timestamp__1)s, 1), (%(metal__2)s, %(price__2)s, %(timestamp__2)s, 2), (%(metal__3)s, %(price__3)s, %(timestamp__3)s, 3)) AS imp_sen(p0, p1, p2, sen_counter) ORDER BY sen_counter RETURNING precious_metals_prices.id, precious_metals_prices.id AS id__1
+2024-10-21 20:37:57 | INFO | [generated in 0.00007s (insertmanyvalues) 1/1 (ordered)] {'timestamp__0': datetime.datetime(2024, 10, 21, 17, 37, 57, 933074), 'price__0': 2504.8170415252, 'metal__0': 'XAU', 'timestamp__1': datetime.datetime(2024, 10, 21, 17, 37, 57, 934092), 'price__1': 31.0258637898, 'metal__1': 'XAG', 'timestamp__2': datetime.datetime(2024, 10, 21, 17, 37, 57, 934092), 'price__2': 938.8962285241, 'metal__2': 'XPT', 'timestamp__3': datetime.datetime(2024, 10, 21, 17, 37, 57, 934092), 'price__3': 966.1036117838, 'metal__3': 'XPD'}
+2024-10-21 20:37:57 | INFO | COMMIT
+2024-10-21 20:37:57 | INFO | Metal prices saved to database successfully.
+2024-10-21 20:37:57 | INFO | Metal prices loaded successfully.
+2024-10-21 20:37:57 | INFO | Training models...
+2024-10-21 20:37:57 | INFO | Connecting to database at: postgresql+psycopg2://postgres:admin@localhost:5432/precious_metals_db
+2024-10-21 20:37:58 | INFO | select pg_catalog.version()
+2024-10-21 20:37:58 | INFO | [raw sql] {}
+2024-10-21 20:37:58 | INFO | select current_schema()
+2024-10-21 20:37:58 | INFO | [raw sql] {}
+2024-10-21 20:37:58 | INFO | show standard_conforming_strings
+2024-10-21 20:37:58 | INFO | [raw sql] {}
+2024-10-21 20:37:58 | INFO | Database connection successful.
+2024-10-21 20:37:58 | INFO | Connecting to database at: postgresql+psycopg2://postgres:admin@localhost:5432/precious_metals_db
+2024-10-21 20:37:58 | INFO | select pg_catalog.version()
+2024-10-21 20:37:58 | INFO | [raw sql] {}
+2024-10-21 20:37:58 | INFO | select current_schema()
+2024-10-21 20:37:58 | INFO | [raw sql] {}
+2024-10-21 20:37:58 | INFO | show standard_conforming_strings
+2024-10-21 20:37:58 | INFO | [raw sql] {}
+2024-10-21 20:37:58 | INFO | Database connection successful.
+2024-10-21 20:37:58 | INFO | BEGIN (implicit)
+2024-10-21 20:37:58 | INFO | 
+                SELECT metal, price, timestamp
+                FROM precious_metals_prices_view
+                WHERE timestamp >= %(twelve_hours_ago)s
+                AND metal IN %(tickers)s
+                
+2024-10-21 20:37:58 | INFO | [generated in 0.00270s] {'twelve_hours_ago': datetime.datetime(2024, 10, 21, 5, 37, 58, 197466), 'tickers': ('XAU', 'XAG', 'XPT', 'XPD')}
+2024-10-21 20:37:58 | INFO | Data fetched successfully from the view.
+2024-10-21 20:37:58 | INFO | ROLLBACK
+2024-10-21 20:37:58 | INFO | Dataset for XAU: [2504.81704153 2504.81704153 2504.81704153 2504.81704153]
+2024-10-21 20:37:59 | INFO | Trained model for XAU.
+2024-10-21 20:37:59 | INFO | Fitted parameters for XAU: {'intercept': -4.776792484158045e-06, 'ar.L1': -7.182019770540291e-10, 'sigma2': 1.7655612825328205e-10, 'aic': -55.22536579889089, 'aicc': inf, 'bic': -57.92952893288656, 'hqic': -60.6610788331907}
+2024-10-21 20:37:59 | INFO | Model metadata for XAU added to session.
+2024-10-21 20:37:59 | INFO | Dataset for XAG: [31.02586379 31.02586379 31.02586379 31.02586379]
+2024-10-21 20:37:59 | INFO | Trained model for XAG.
+2024-10-21 20:37:59 | INFO | Fitted parameters for XAG: {'intercept': -4.776792898952316e-06, 'ar.L1': -7.184319632588401e-10, 'sigma2': 1.765561296072982e-10, 'aic': -55.22536575859239, 'aicc': inf, 'bic': -57.92952889258806, 'hqic': -60.6610787928922}
+2024-10-21 20:37:59 | INFO | Model metadata for XAG added to session.
+2024-10-21 20:37:59 | INFO | Dataset for XPT: [938.89622852 938.89622852 938.89622852 938.89622852]
+2024-10-21 20:37:59 | INFO | Trained model for XPT.
+2024-10-21 20:37:59 | INFO | Fitted parameters for XPT: {'intercept': -4.776792989992935e-06, 'ar.L1': -7.183553781328622e-10, 'sigma2': 1.765561308761661e-10, 'aic': -55.22536573610907, 'aicc': inf, 'bic': -57.92952887010474, 'hqic': -60.66107877040888}
+2024-10-21 20:37:59 | INFO | Model metadata for XPT added to session.
+2024-10-21 20:37:59 | INFO | Dataset for XPD: [966.10361178 966.10361178 966.10361178 966.10361178]
+2024-10-21 20:37:59 | INFO | Trained model for XPD.
+2024-10-21 20:37:59 | INFO | Fitted parameters for XPD: {'intercept': -4.776792808516329e-06, 'ar.L1': -7.186622207514299e-10, 'sigma2': 1.7655612848724066e-10, 'aic': -55.22536577664128, 'aicc': inf, 'bic': -57.929528910636954, 'hqic': -60.66107881094109}
+2024-10-21 20:37:59 | INFO | Model metadata for XPD added to session.
+2024-10-21 20:37:59 | INFO | BEGIN (implicit)
+2024-10-21 20:37:59 | INFO | INSERT INTO model_training_metadata (metal, hyperparameters, parameters, timestamp) SELECT p0::VARCHAR, p1::JSON, p2::JSON, p3::TIMESTAMP WITHOUT TIME ZONE FROM (VALUES (%(metal__0)s, %(hyperparameters__0)s, %(parameters__0)s, %(timestamp__0)s, 0), ( ... 273 characters truncated ... nter) ORDER BY sen_counter RETURNING model_training_metadata.id, model_training_metadata.id AS id__1
+2024-10-21 20:37:59 | INFO | [generated in 0.00023s (insertmanyvalues) 1/1 (ordered)] {'hyperparameters__0': '{"p": 1, "d": 1, "q": 0}', 'timestamp__0': datetime.datetime(2024, 10, 21, 17, 37, 59, 219994), 'metal__0': 'XAU', 'parameters__0': '{"intercept": -4.776792484158045e-06, "ar.L1": -7.182019770540291e-10, "sigma2": 1.7655612825328205e-10, "aic": -55.22536579889089, "bic": -57.92952893288656, "hqic": -60.6610788331907}', 'hyperparameters__1': '{"p": 1, "d": 1, "q": 0}', 'timestamp__1': datetime.datetime(2024, 10, 21, 17, 37, 59, 283340), 'metal__1': 'XAG', 'parameters__1': '{"intercept": -4.776792898952316e-06, "ar.L1": -7.184319632588401e-10, "sigma2": 1.765561296072982e-10, "aic": -55.22536575859239, "bic": -57.92952889258806, "hqic": -60.6610787928922}', 'hyperparameters__2': '{"p": 1, "d": 1, "q": 0}', 'timestamp__2': datetime.datetime(2024, 10, 21, 17, 37, 59, 347078), 'metal__2': 'XPT', 'parameters__2': '{"intercept": -4.776792989992935e-06, "ar.L1": -7.183553781328622e-10, "sigma2": 1.765561308761661e-10, "aic": -55.22536573610907, "bic": -57.92952887010474, "hqic": -60.66107877040888}', 'hyperparameters__3': '{"p": 1, "d": 1, "q": 0}', 'timestamp__3': datetime.datetime(2024, 10, 21, 17, 37, 59, 400472), 'metal__3': 'XPD', 'parameters__3': '{"intercept": -4.776792808516329e-06, "ar.L1": -7.186622207514299e-10, "sigma2": 1.7655612848724066e-10, "aic": -55.22536577664128, "bic": -57.929528910636954, "hqic": -60.66107881094109}'}
+2024-10-21 20:37:59 | INFO | COMMIT
+2024-10-21 20:37:59 | INFO | Session committed successfully. Model metadata should be saved.
+2024-10-21 20:37:59 | INFO | Models trained successfully.
+2024-10-21 20:37:59 | INFO | Trained models saved successfully.
+2024-10-21 20:37:59 | INFO | Process completed successfully.
